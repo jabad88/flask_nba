@@ -1,4 +1,4 @@
-from flask import flash, redirect,render_template,request,session,abort, render_template_string, send_from_directory
+from flask import render_template,url_for
 from app import app
 from app.models import Player
 import os
@@ -22,18 +22,20 @@ def all_players_list():
     return "<h1>{{ list all players in db through this endpoint }}</h1>"
 
 @app.route("/players/<string:user_id>")
-def lebron(user_id):
-    lebron = Player.query.get(user_id)
+def get_single_player(user_id):
+    player = Player.query.get(user_id)
     
-    if lebron:
-        return render_template("template.html",name=(lebron.first + " "+  lebron.last), quote=lebron.quote)
+    if player:
+        get_picture = f"{player.first.lower()}.jpeg"
+        
+        return render_template("template.html", 
+                               name=(player.first + " " +  player.last), 
+                               quote=player.quote, 
+                               img = url_for('static', filename=f'{get_picture}')
+                            )
     else:
-        return "Something went wrong finding Lebron"
+        return "Something went wrong finding the NBA player.", 404
 
-# @app.route("/kobe")
-# def kobe():
-#     return render_template("template.html",name=nba_players[1]['name'], quote=nba_players[1]['quote'], img=nba_players[1]['img'])
-    
 
 #TODO Get pictures to work for indiviudals players
 #Fixed: the players in the database get called from def lebron. Reword this function
